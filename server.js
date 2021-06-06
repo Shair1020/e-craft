@@ -1,17 +1,18 @@
-const express = require("express");
+
+require("dotenv").config()
+const app = require('./app')
 const mongoose = require("mongoose");
-const mongoDB_password = "ebWVEBSSr4FfWza5";
+
+const DB =process.env.MONGO_STRING.replace("<PASSWORD>",process.env.MONGO_PASSWORD)
 mongoose
-  .connect("mongodb+srv://shairali:ebWVEBSSr4FfWza5@cluster0.ihaqw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority", {
+  .connect(DB, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
   .then((con) => {
     console.log("Connected to mongodb");
-    console.log(con.connections);
+    // console.log(con.connections);
   });
-const app = express();
-
-app.listen(8000, () => {
+app.listen(process.env.PORT, () => {
   console.log("Server running on 8000");
 });
