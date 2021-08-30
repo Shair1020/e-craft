@@ -1,5 +1,6 @@
 const User = require("../models/authModel")
 const JWT = require("jsonwebtoken");
+const bcrypt = require("bcryptjs")
 
 
 exports.fetchUsers = async (req, res) => {
@@ -31,6 +32,42 @@ exports.signup = async (req, res) => {
             token,
             data: {
                 user: modifiedUser,
+            }
+        })
+    } catch (error) {
+        res.status(404).json({
+            status: "error",
+            error: error.message
+        })
+
+    }
+}
+
+exports.login = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        if (!email || !password) {
+            return res.status(404).json({
+                status: "error",
+                error: "please enter email and password"
+            });
+        }
+        const user = await User.findOne({ email }).select("+password");
+        const verifiedPassword = await bcrypt.compare(password, user.password);
+        if (!verifiedPassword || !user) {
+            return res.status(401).json({
+                status: "error",
+                error: "Invalid email and password"
+            });
+        }
+        const token = JWT.sign({ id: user._id }, process.env.JWT_WEB_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+        // const { password, ...modifiedUser } = user.toObject()
+        user.password="";
+        res.status(200).json({
+            status: "Success",
+            token,
+            data: {
+                user,
             }
         })
     } catch (error) {
