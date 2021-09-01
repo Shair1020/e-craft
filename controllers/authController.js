@@ -2,7 +2,9 @@ const User = require("../models/authModel")
 const JWT = require("jsonwebtoken");
 const bcrypt = require("bcryptjs")
 
-
+const signJWT = (userId) => {
+    return JWT.sign({ id: userId }, process.env.JWT_WEB_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+}
 exports.fetchUsers = async (req, res) => {
     try {
         const user = await User.find();
@@ -26,7 +28,7 @@ exports.signup = async (req, res) => {
         const user = await User.create(req.body);
         const { password, ...modifiedUser } = user.toObject()
         ///JWT TOKEN
-        const token = JWT.sign({ id: user._id }, process.env.JWT_WEB_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+        const token = signJWT(user._id);
         res.status(200).json({
             status: "Sucess",
             token,
@@ -60,7 +62,7 @@ exports.login = async (req, res) => {
                 error: "Invalid email and password"
             });
         }
-        const token = JWT.sign({ id: user._id }, process.env.JWT_WEB_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
+        const token = signJWT(user._id);
         var { password, ...modifiedUser } = user.toObject()
         // user.password="";
         res.status(200).json({
