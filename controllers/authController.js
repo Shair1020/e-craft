@@ -55,8 +55,8 @@ exports.login = async (req, res) => {
             });
         }
         const user = await User.findOne({ email }).select("+password");
-        const verifiedPassword = await bcrypt.compare(password, user.password);
-        if (!verifiedPassword || !user) {
+        const verifiedPassword = await user.passwordVerification(password, user.password);
+        if (!(verifiedPassword) || !user) {
             return res.status(401).json({
                 status: "error",
                 error: "Invalid email and password"
