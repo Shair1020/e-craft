@@ -45,7 +45,7 @@ exports.signup = async (req, res) => {
 
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        var { email, password } = req.body;
         if (!email || !password) {
             return res.status(404).json({
                 status: "error",
@@ -61,13 +61,13 @@ exports.login = async (req, res) => {
             });
         }
         const token = JWT.sign({ id: user._id }, process.env.JWT_WEB_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
-        // const { password, ...modifiedUser } = user.toObject()
-        user.password="";
+        var { password, ...modifiedUser } = user.toObject()
+        // user.password="";
         res.status(200).json({
             status: "Success",
             token,
             data: {
-                user,
+                user: modifiedUser,
             }
         })
     } catch (error) {
