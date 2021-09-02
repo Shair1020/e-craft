@@ -124,3 +124,14 @@ exports.protect = async (req, res, next) => {
         })
     }
 }
+
+exports.restrictTo =
+  (...roles) =>
+  async (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return res.status(401).json({
+        error: "you dont have access to perform this action!",
+      });
+    }
+    next();
+  };
