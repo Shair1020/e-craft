@@ -1,6 +1,7 @@
 const User = require("../models/authModel")
 const JWT = require("jsonwebtoken");
 const bcrypt = require("bcryptjs")
+const { promisify } = require("util")
 
 const signJWT = (userId) => {
     return JWT.sign({ id: userId }, process.env.JWT_WEB_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
@@ -78,5 +79,48 @@ exports.login = async (req, res) => {
             error: error.message
         })
 
+    }
+}
+
+exports.protect = async (req, res, next) => {
+    try {
+        var token = null;
+        //fetch token from request header
+        if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+            token = req.headers.authorization.split(" ")[1]
+        }
+        //check if token exist
+        if (!token) {
+            return res.status(401).json({
+                error: "Please sign in",
+            })
+        }
+        //verify
+        const { id: userId, iat: tokenIssuedAt } = await promisify(JWT.verify)(token, process.env.JWT_WEB_SECRET)
+        //check if user exist in DB 
+        const user = await User.findById(userId)
+        if (!user) {
+            return res.status(401).json({
+                error: "user belonging to this token does not exist!",
+            });
+        }
+        //check user if sign in then password changed
+        const passwordChangedAt = user.passwordChanged
+        if (passwordChangedAt) {
+            const isPasswordChangedAfter = passwordChangedAt.getTime() > tokenIssuedAt * 1000;
+            if (isPasswordChangedAfter) {
+                return res.status(401).json({
+                    error: "password has been changed ,please login again!",
+                });
+            }
+        }
+        req.user = user;
+        next();
+    }
+    catch (error) {
+        return res.status(404).json({
+            status: "error",
+            error: error.message
+        })
     }
 }

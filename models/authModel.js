@@ -27,7 +27,8 @@ const userSchema = new mongoose.Schema({
             },
             "passowrd not match ",
         ],
-    }
+    },
+    passwordChanged: Date,
 });
 
 userSchema.methods.passwordVerification = async (password, hashPassword) => {

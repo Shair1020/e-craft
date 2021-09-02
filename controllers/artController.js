@@ -20,8 +20,9 @@ exports.addArt = async (req, res) => {
 
 exports.getArt = async (req, res) => {
   try {
-    var { limit} = req.query;
-    var query = new APIFeatures(Art, req.query) .filter().sort().fields().paginate();
+    console.log(req.user)
+    var { limit } = req.query;
+    var query = new APIFeatures(Art, req.query).filter().sort().fields().paginate();
     var arts = await query.get();
     var totalPages = Math.ceil((await Art.countDocuments()) / limit);
     res.status(200).json({
