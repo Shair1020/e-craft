@@ -2,11 +2,29 @@ const User = require("../models/authModel")
 const JWT = require("jsonwebtoken");
 const bcrypt = require("bcryptjs")
 const { promisify } = require("util")
+const crypto = require("crypto");
 const sendEmail = require("../utility/email")
 
 const signJWT = (userId) => {
     return JWT.sign({ id: userId }, process.env.JWT_WEB_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
 }
+
+const createAndSendToken = (user, res) => {
+    var token = signJWT(user.userId);
+    res.cookie("jwt", token, {
+        expires: new Date(Date.now() + parseInt(process.env.COOKIE_EXPIRES_IN) * 24 * 60 * 60 * 1000),
+        secure: process.env.NODE_ENV === "development" ? false : true,  //this will only valid for HTTPS connection
+        httpOnly: true //transfer only in http/https protocols
+    })
+    var { password, confirmPassword, ...modifiedUser } = user.toObject()
+    res.status(200).json({
+        status: "success",
+        token, //browser local || cookie
+        data: {
+            user: modifiedUser
+        },
+    });
+};
 exports.fetchUsers = async (req, res) => {
     try {
         const user = await User.find();
@@ -169,16 +187,37 @@ exports.forgotPassword = async (req, res) => {
 }
 exports.resetPassword = async (req, res) => {
     try {
-        res.status(200).json({
-            msg: "reset Password"
-        })
-
+        //get user on the basis of passwordResetToken
+        const { token } = req.params;
+        const { password, confirmPassword } = req.body;
+        const encryptedResetToken = crypto
+            .createHash("sha256")
+            .update(token)
+            .digest("hex");
+        var user = await User.findOne({
+            passwordResetToken: encryptedResetToken,
+            passwordResetTokenExpiresAt: { $gt: Date.now() },
+        });
+        //if user doesnt exist then send error in response
+        if (!user) {
+            return res.status(401).json({
+                error: "token doesnt exist or has been expired!",
+            });
+        }
+        //set user new password
+        user.password = password;
+        user.confirmPassword = confirmPassword;
+        user.passwordResetToken = undefined;
+        await user.save();
+        createAndSendToken(user, res);
     } catch (error) {
+        user.passwordResetToken = undefined;
+        user.passwordResetTokenExpiresAt = undefined;
+        user.confirmPassword = null;
+        await user.save({ validateBeforeSave: false });
         return res.status(404).json({
             status: "error",
-            error: error.message
-        })
-
+            error: error.message,
+        });
     }
-
-}
+};

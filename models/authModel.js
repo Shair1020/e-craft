@@ -55,14 +55,20 @@ userSchema.methods.passwordTokenGenerator = function () {
     return resetToken;
 }
 
+userSchema.pre("save",async function(next) {
+    if (!this.isModified("password") && !this.isNew) return next();
+    this.passwordChanged = Date.now() - 1000
+    next();
+  })
+
 userSchema.pre("save", async function (next) {
     //this -> document
     if (!this.isModified("password")) return next();
     var encryptedPassword = await bcrypt.hash(this.password, 12); //number brute force attack
     this.password = encryptedPassword;
-    this.passwordConfirm = undefined;
+    this.confirmPassword = undefined;
     next();
-  })
+})
 
 const User = new mongoose.model("User", userSchema);
 module.exports = User;
