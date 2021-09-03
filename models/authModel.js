@@ -46,10 +46,8 @@ userSchema.methods.passwordVerification = async (password, hashPassword) => {
 userSchema.methods.passwordTokenGenerator = function () {
     // generate random string 32bit
     const resetToken = crypto.randomBytes(32).toString('hex');
-    console.log(resetToken)
     //encrpyt reset token
     const encryptedResetToken = crypto.createHash("sha256").update(resetToken).digest('hex')
-    console.log(encryptedResetToken)
     //save encrypt reset token in user collection
     this.passwordResetToken = encryptedResetToken
     this.passwordResetTokenExpiresAt = Date.now() + 10 * 60 * 1000;
@@ -57,12 +55,14 @@ userSchema.methods.passwordTokenGenerator = function () {
     return resetToken;
 }
 
-userSchema.pre("save", async function () {
+userSchema.pre("save", async function (next) {
+    //this -> document
     if (!this.isModified("password")) return next();
-    const encryptPassword = await bcrypt.hash(this.password, 12)
-    this.password = encryptPassword
-    this.confirmPassword = undefined
-})
+    var encryptedPassword = await bcrypt.hash(this.password, 12); //number brute force attack
+    this.password = encryptedPassword;
+    this.passwordConfirm = undefined;
+    next();
+  })
 
 const User = new mongoose.model("User", userSchema);
 module.exports = User;

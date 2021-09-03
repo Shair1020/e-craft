@@ -6,7 +6,7 @@ route.get("/", fetchUsers);
 route.post("/signup", signup);
 route.post("/login", login)
 route.post("/forgot-password", forgotPassword);
-route.post("/reset-password", resetPassword)
+route.post("/reset-password/:token", resetPassword)
 
 
 module.exports = route;

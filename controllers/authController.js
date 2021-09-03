@@ -2,6 +2,7 @@ const User = require("../models/authModel")
 const JWT = require("jsonwebtoken");
 const bcrypt = require("bcryptjs")
 const { promisify } = require("util")
+const sendEmail = require("../utility/email")
 
 const signJWT = (userId) => {
     return JWT.sign({ id: userId }, process.env.JWT_WEB_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
@@ -149,7 +150,10 @@ exports.forgotPassword = async (req, res) => {
         }
         //2- generate reset token
         const resetPasswordToken = user.passwordTokenGenerator();
+        await user.save({ validateBeforeSave: false });
         //3- send it to user email
+        var msg = `please click to that link for changing your password, note that the link will expires in 10 min -  http://localhost:8000/api/v1/auth/reset-password/${resetPasswordToken}`;
+        await sendEmail({ to: email, subject: "password reset Token", content: msg })
         res.status(200).json({
             msg: "forgot Password"
         })
