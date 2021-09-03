@@ -126,12 +126,55 @@ exports.protect = async (req, res, next) => {
 }
 
 exports.restrictTo =
-  (...roles) =>
-  async (req, res, next) => {
-    if (!roles.includes(req.user.role)) {
-      return res.status(401).json({
-        error: "you dont have access to perform this action!",
-      });
+    (...roles) =>
+        async (req, res, next) => {
+            if (!roles.includes(req.user.role)) {
+                return res.status(401).json({
+                    error: "you dont have access to perform this action!",
+                });
+            }
+            next();
+        };
+
+exports.forgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body
+        //1- fetch user on the basis of email
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(404).json({
+                status: "error",
+                error: "no user found!",
+            })
+        }
+        //2- generate reset token
+        const resetPasswordToken = user.passwordTokenGenerator();
+        //3- send it to user email
+        res.status(200).json({
+            msg: "forgot Password"
+        })
+
+    } catch (error) {
+        return res.status(404).json({
+            status: "error",
+            error: error.message
+        })
+
     }
-    next();
-  };
+
+}
+exports.resetPassword = async (req, res) => {
+    try {
+        res.status(200).json({
+            msg: "reset Password"
+        })
+
+    } catch (error) {
+        return res.status(404).json({
+            status: "error",
+            error: error.message
+        })
+
+    }
+
+}
