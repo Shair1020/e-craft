@@ -1,7 +1,13 @@
 const mongoose = require("mongoose");
+const { Schema: { ObjectId } } = require("mongoose")
 
 const artSchema = new mongoose.Schema(
   {
+    artist: {
+      type: ObjectId,
+      ref: "User",
+      required: [true, "art must belong to artist"]
+    },
     title: String,
     decription: String,
     cost: Number,
@@ -16,6 +22,11 @@ const artSchema = new mongoose.Schema(
       },
     ],
     gallery: Array,
+    likes: [mongoose.Schema.ObjectId],
+    likesCount: {
+      type: Number,
+      default: 0
+    },
     orientation: String,
     subject: String,
     formats: Array,
@@ -25,6 +36,14 @@ const artSchema = new mongoose.Schema(
   }
 );
 
+artSchema.pre(/^find/, function (next) {//query middleware
+
+  this.populate({
+    path: "artist",
+    select: "email username"
+  })
+  next()
+})
 const Art = new mongoose.model("Art", artSchema);
 
 module.exports = Art;

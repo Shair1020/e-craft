@@ -3,8 +3,8 @@ const APIFeatures = require("../utility/common");
 
 exports.addArt = async (req, res) => {
   try {
+    req.body.artist = req.user._id
     var art = await Art.create(req.body);
-    console.log(art);
     console.log("art called");
     res.status(200).json({
       status: "sucess",
@@ -41,7 +41,7 @@ exports.getArt = async (req, res) => {
 exports.fetchArt = async (req, res) => {
   try {
     const { artId } = req.params;
-    const arts = await Art.find({ _id: artId });
+    const arts = await Art.findById(artId);
     res.status(200).json({
       status: "sucess",
       results: arts.length,
@@ -92,3 +92,42 @@ exports.upadteArt = async (req, res) => {
     });
   }
 };
+
+exports.likeArt = async (req, res) => {
+  try {
+    const { artId } = req.params;
+    const { _id: userId } = req.user
+
+    const art = await Art.findByIdAndUpdate(artId, {
+      $inc: { likesCount: 1 },
+      $push: { likes: userId }
+    }, {
+      new: true
+    })
+    res.status(200).json({
+      status: "like",
+      data: {
+        art,
+      },
+    });
+  } catch (error) {
+    res.status(404).json({
+      error: error.message,
+    });
+  }
+}
+
+exports.disLikeArt = async (req, res) => {
+  try {
+    console.log(req.params.artId)
+    res.status(200).json({
+      status: "dislike",
+      data: {
+      },
+    });
+  } catch (error) {
+    res.status(404).json({
+      error: error.message,
+    });
+  }
+}
