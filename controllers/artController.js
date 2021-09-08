@@ -98,7 +98,10 @@ exports.likeArt = async (req, res) => {
     const { artId } = req.params;
     const { _id: userId } = req.user
 
-    const art = await Art.findByIdAndUpdate(artId, {
+    const art = await Art.findOneAndUpdate({
+      _id: artId,
+      likes: { $ne: userId },
+    }, {
       $inc: { likesCount: 1 },
       $push: { likes: userId }
     }, {
@@ -119,10 +122,22 @@ exports.likeArt = async (req, res) => {
 
 exports.disLikeArt = async (req, res) => {
   try {
-    console.log(req.params.artId)
+    const { artId } = req.params;
+    const { _id: userId } = req.user
+
+    const art = await Art.findOneAndUpdate({
+      _id: artId,
+      likes: userId,
+    }, {
+      $inc: { likesCount: -1 },
+      $pull: { likes: userId }
+    }, {
+      new: true
+    })
     res.status(200).json({
       status: "dislike",
       data: {
+        art,
       },
     });
   } catch (error) {
