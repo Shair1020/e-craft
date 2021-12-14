@@ -32,9 +32,14 @@ const artSchema = new mongoose.Schema(
     formats: Array,
   },
   {
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
     timestamps: true,
   }
 );
+artSchema.virtual("numberOfLikes").get(function () {
+  return this.likes.length
+})
 
 artSchema.pre(/^find/, function (next) {//query middleware
 
