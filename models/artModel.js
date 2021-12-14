@@ -37,8 +37,17 @@ const artSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
-artSchema.virtual("numberOfLikes").get(function () {
-  return this.likes.length
+//virtual Properties
+// artSchema.virtual("numberOfLikes").get(function () {
+//   return this.likes.length
+// })
+
+//virtual populate
+
+artSchema.virtual("reviews",{
+  ref:"Review",
+  //foreginField (review) -> art
+  //localField (art) -> _id
 })
 
 artSchema.pre(/^find/, function (next) {//query middleware
