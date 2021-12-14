@@ -14,13 +14,6 @@ const artSchema = new mongoose.Schema(
     resolutionWidth: Number,
     resolutionHeight: Number,
     likes: Number,
-    reviews: [
-      {
-        content: String,
-        reviwedBy: String,
-        rating: Number,
-      },
-    ],
     gallery: Array,
     likes: [mongoose.Schema.ObjectId],
     likesCount: {
@@ -44,11 +37,11 @@ const artSchema = new mongoose.Schema(
 
 //virtual populate
 
-artSchema.virtual("reviews",{
-  ref:"Review",
-  //foreginField (review) -> art
-  //localField (art) -> _id
-})
+artSchema.virtual("reviews", {
+  ref: "Review",
+  foreignField: "art",
+  localField: "_id"
+});
 
 artSchema.pre(/^find/, function (next) {//query middleware
 
