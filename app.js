@@ -10,7 +10,7 @@ app.use(express.json());
 //routes
 app.use("/api/v1/arts", artRouter);
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/review", reviewRouter);
+// app.use("/api/v1/review", reviewRouter);
 
 
 module.exports = app;

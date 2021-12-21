@@ -9,7 +9,10 @@ const reviewSchema = new mongoose.Schema(
             min: 0,
             max: 5
         },
-        reviewedBy: mongoose.Schema.ObjectId,
+        reviewedBy: {
+            type: mongoose.Schema.ObjectId,
+            ref: "User"
+        },
         art: mongoose.Schema.ObjectId,
     },
     {
@@ -17,6 +20,14 @@ const reviewSchema = new mongoose.Schema(
     }
 );
 
+reviewSchema.pre(/^find/, function (next) {
+    //this -> query
+    this.populate({
+        path: "reviewedBy",
+        select: "username email"
+    })
+    next();
+})
 const Review = new mongoose.model("Review", reviewSchema);
 
 module.exports = Review;

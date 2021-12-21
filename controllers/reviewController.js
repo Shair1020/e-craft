@@ -2,6 +2,10 @@ const Review = require("../models/reviewModel");
 
 exports.postReview = async (req, res) => {
     try {
+        const { artId } = req.params;
+        const { _id: userId } = req.user;
+        req.body.art = artId;
+        req.body.reviewedBy = userId
         const review = await Review.create(req.body)
         res.status(200).json({
             status: "post a review",

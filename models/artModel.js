@@ -39,8 +39,8 @@ const artSchema = new mongoose.Schema(
 
 artSchema.virtual("reviews", {
   ref: "Review",
-  foreignField: "art",
-  localField: "_id"
+  foreignField: "art", //-> referencing populate
+  localField: "_id"  //-> referencin populate
 });
 
 artSchema.pre(/^find/, function (next) {//query middleware

@@ -22,7 +22,7 @@ exports.getArt = async (req, res) => {
   try {
     var { limit } = req.query;
     var query = new APIFeatures(Art, req.query).filter().sort().fields().paginate();
-    var arts = await query.get();
+    var arts = await query.get().populate("reviews");
     var totalPages = Math.ceil((await Art.countDocuments()) / limit);
     res.status(200).json({
       status: "success",
@@ -41,7 +41,7 @@ exports.getArt = async (req, res) => {
 exports.fetchArt = async (req, res) => {
   try {
     const { artId } = req.params;
-    const arts = await Art.findById(artId);
+    const arts = await Art.findById(artId).populate("reviews");
     res.status(200).json({
       status: "sucess",
       results: arts.length,
