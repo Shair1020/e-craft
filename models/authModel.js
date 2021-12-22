@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
         unique: true,
         required: [true, "email is required"]
     },
+    displayPicture: {
+        type: String,
+        required: [true, "display pic is required"]
+    },
     password: {
         type: String,
         required: [true, "password is required"],
@@ -55,11 +59,11 @@ userSchema.methods.passwordTokenGenerator = function () {
     return resetToken;
 }
 
-userSchema.pre("save",async function(next) {
+userSchema.pre("save", async function (next) {
     if (!this.isModified("password") && !this.isNew) return next();
     this.passwordChanged = Date.now() - 1000
     next();
-  })
+})
 
 userSchema.pre("save", async function (next) {
     //this -> document
