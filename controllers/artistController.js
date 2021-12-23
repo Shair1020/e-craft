@@ -1,3 +1,5 @@
+const Artist = require("./../models/artistModel")
+
 exports.fetchAllArtists = async (req, res) => {
     try {
         res.status(200).json({
@@ -10,5 +12,15 @@ exports.fetchAllArtists = async (req, res) => {
             status: "error",
             error: error.message
         })
+    }
+}
+
+exports.addArtist = async (artistProfile) => {
+    try {
+        const artist = await Artist.create(artistProfile);
+        return artist
+
+    } catch (error) {
+        return new Error(error.message)
     }
 }

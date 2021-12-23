@@ -1,3 +1,5 @@
+const Buyer = require("./../models/buyerModel")
+
 exports.fetchAllBuyers = async (req, res) => {
     try {
         res.status(200).json({
@@ -10,5 +12,15 @@ exports.fetchAllBuyers = async (req, res) => {
             status: "error",
             error: error.message
         })
+    }
+}
+
+exports.addBuyer = async (buyerProfile) => {
+    try {
+        const buyer = await Buyer.create(buyerProfile);
+        return buyer;
+
+    } catch (error) {
+        return new Error(error.message);
     }
 }

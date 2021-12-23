@@ -1,8 +1,8 @@
 const express = require("express");
-const { fetchAllBuyers } = require("../controllers/buyerController");
+const { fetchAllBuyers, addBuyer } = require("../controllers/buyerController");
 const router = express.Router();
 
-router.route("/").get(fetchAllBuyers)
+// router.route("/").post(addBuyer)
 
 
 module.exports = router

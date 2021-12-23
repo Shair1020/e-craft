@@ -12,13 +12,16 @@ const artistSchema = new mongoose.Schema({
     },
     displayPicture: {
         type: String,
-        required: [true, "display pic is required"]
+        default:"deault.png"
     },
     userId: {
         type: mongoose.Schema.ObjectId,
         required: [true, "user id is required"]
+    },
+    role: {
+        type: String,
+        default: "artist"
     }
-
     //bankingInfo
     //address Info
 }, {

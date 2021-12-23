@@ -1,8 +1,8 @@
 const express = require("express");
-const { fetchAllArtists } = require("../controllers/artistController");
+const { fetchAllArtists, addArtist } = require("../controllers/artistController");
 const router = express.Router();
 
-router.route("/").get(fetchAllArtists)
+// router.route("/").post(addArtist);
 
 
 module.exports = router
