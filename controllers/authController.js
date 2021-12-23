@@ -3,7 +3,10 @@ const JWT = require("jsonwebtoken");
 const bcrypt = require("bcryptjs")
 const { promisify } = require("util")
 const crypto = require("crypto");
-const sendEmail = require("../utility/email")
+const sendEmail = require("../utility/email");
+const { addArtist } = require("./artistController");
+const { addBuyer } = require("./buyerController");
+
 
 const signJWT = (userId) => {
     return JWT.sign({ id: userId }, process.env.JWT_WEB_SECRET, { expiresIn: process.env.JWT_EXPIRES_IN });
@@ -46,9 +49,22 @@ exports.fetchUsers = async (req, res) => {
 exports.signup = async (req, res) => {
     try {
         const user = await User.create(req.body);
+        const profile = {
+            username: user.username,
+            email: user.email,
+            userId: user._id
+        }
+        if (user.role === "artist") {
+            const artist = await addArtist(profile)
+        }
+
+        if (user.role === "buyer") {
+            const buyer = await addBuyer(profile)
+        }
         const { password, ...modifiedUser } = user.toObject()
         ///JWT TOKEN
-        const token = signJWT(user._id);
+        // const token = signJWT(user._id);
+         createAndSendToken(user, res)
         res.status(200).json({
             status: "Sucess",
             token,

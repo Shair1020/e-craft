@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     },
     displayPicture: {
         type: String,
-        required: [true, "display pic is required"]
+        default:"default.png"
     },
     password: {
         type: String,
