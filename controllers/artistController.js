@@ -27,7 +27,7 @@ exports.addArtist = async (artistProfile) => {
 
 exports.fetchArtist = async (artistId) => {
 try {
-    const artist = await Artist.find({userId:artistId});
+    const artist = await Artist.findOne({userId:artistId});
     return artist 
     
 } catch (error) {
