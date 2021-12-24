@@ -19,12 +19,11 @@ const createAndSendToken = (user, res) => {
         secure: process.env.NODE_ENV === "development" ? false : true,  //this will only valid for HTTPS connection
         httpOnly: true //transfer only in http/https protocols
     })
-    var { password, confirmPassword, ...modifiedUser } = user.toObject()
     res.status(200).json({
         status: "success",
         token, //browser local || cookie
         data: {
-            user: modifiedUser
+            user
         },
     });
 };
@@ -54,24 +53,25 @@ exports.signup = async (req, res) => {
             email: user.email,
             userId: user._id
         }
+        let userProfile = null;
         if (user.role === "artist") {
-            const artist = await addArtist(profile)
+            userProfile = await addArtist(profile)
         }
 
         if (user.role === "buyer") {
-            const buyer = await addBuyer(profile)
+            userProfile = await addBuyer(profile)
         }
-        const { password, ...modifiedUser } = user.toObject()
+        createAndSendToken(userProfile, res)
+        // const { password, ...modifiedUser } = user.toObject()
         ///JWT TOKEN
         // const token = signJWT(user._id);
-         createAndSendToken(user, res)
-        res.status(200).json({
-            status: "Sucess",
-            token,
-            data: {
-                user: modifiedUser,
-            }
-        })
+        // res.status(200).json({
+        //     status: "Sucess",
+        //     token,
+        //     data: {
+        //         user: modifiedUser,
+        //     }
+        // })
     } catch (error) {
         res.status(404).json({
             status: "error",
