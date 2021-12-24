@@ -24,3 +24,13 @@ exports.addArtist = async (artistProfile) => {
         return new Error(error.message)
     }
 }
+
+exports.fetchArtist = async (artistId) => {
+try {
+    const artist = await Artist.find({userId:artistId});
+    return artist 
+    
+} catch (error) {
+    return new Error(error.message)
+}
+}

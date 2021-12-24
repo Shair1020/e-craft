@@ -24,3 +24,13 @@ exports.addBuyer = async (buyerProfile) => {
         return new Error(error.message);
     }
 }
+
+exports.fetchBuyer = async (buyerId) => {
+    try {
+        const buyer = await Buyer.find({userId:buyerId});
+        return buyer 
+        
+    } catch (error) {
+        return new Error(error.message)
+    }
+    }

@@ -4,8 +4,8 @@ const bcrypt = require("bcryptjs")
 const { promisify } = require("util")
 const crypto = require("crypto");
 const sendEmail = require("../utility/email");
-const { addArtist } = require("./artistController");
-const { addBuyer } = require("./buyerController");
+const { addArtist, fetchArtist } = require("./artistController");
+const { addBuyer, fetchBuyer } = require("./buyerController");
 
 
 const signJWT = (userId) => {
@@ -98,16 +98,20 @@ exports.login = async (req, res) => {
                 error: "Invalid email and password"
             });
         }
-        const token = signJWT(user._id);
-        var { password, ...modifiedUser } = user.toObject()
-        // user.password="";
-        res.status(200).json({
-            status: "Success",
-            token,
-            data: {
-                user: modifiedUser,
-            }
-        })
+        let userProfile = null;
+        if (user.role === "artist") userProfile = await fetchArtist(user._id)
+        if (user.role === "buyer") userProfile = await fetchBuyer(user._id)
+        createAndSendToken(userProfile, res);
+        // const token = signJWT(user._id);
+        // var { password, ...modifiedUser } = user.toObject()
+        // // user.password="";
+        // res.status(200).json({
+        //     status: "Success",
+        //     token,
+        //     data: {
+        //         user: modifiedUser,
+        //     }
+        // })
     } catch (error) {
         res.status(404).json({
             status: "error",
