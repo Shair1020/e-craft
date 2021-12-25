@@ -18,15 +18,12 @@ exports.artUpload = multer({ storage: storage }).any();
 
 exports.addArt = async (req, res) => {
   try {
-    // req.body.artist = req.user._id
-    // var art = await Art.create(req.body);
-    // console.log(req.body);
-    const artPic = shapeArtData(req.body, req.files)
-    console.log(artPic)
-
+    const artData = shapeArtData(req)
+    const art = await Art.create(artData);
+    // console.log(artData)
     res.status(200).json({
       status: "sucess",
-      // data: { art },
+      data: { art },
     });
   } catch (error) {
     console.log(error);
