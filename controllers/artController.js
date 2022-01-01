@@ -4,12 +4,15 @@ const multer = require('multer')
 const { v4: uuid } = require("uuid");
 const { shapeArtData } = require("../utility/art");
 
+// const storage = multer.memoryStorage();
+// exports.artUpload = multer({ storage: storage }).any();
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'public/images/')
   },
   filename: (req, file, cb) => {
-    const ext = file.mimetype.split("/")[1];
+ const ext = file.mimetype.split("/")[1];
     cb(null, `art-${req.user._id}-${uuid()}-${Date.now()}.${ext}`);
   }
 });
