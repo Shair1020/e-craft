@@ -164,3 +164,15 @@ exports.disLikeArt = async (req, res) => {
     });
   }
 }
+
+exports.testArt = async (req, res) => {
+  try {
+    res.status(200).json({
+      status: "success",
+      msg:"Testing"
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(404).json({ error: error.message });
+  }
+};
