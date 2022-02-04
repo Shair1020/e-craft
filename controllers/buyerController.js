@@ -27,10 +27,22 @@ exports.addBuyer = async (buyerProfile) => {
 
 exports.fetchBuyer = async (buyerId) => {
     try {
-        const buyer = await Buyer.findOne({userId:buyerId});
-        return buyer 
-        
+        const buyer = await Buyer.findOne({ userId: buyerId });
+        return buyer
+
     } catch (error) {
         return new Error(error.message)
     }
+}
+
+exports.upadateBuyer = async (buyerId, profile) => {
+    try {
+        const buyer = await Buyer.findOneAndUpdate({ userId: buyerId }, profile, {
+            new: true
+        });
+        return buyer
+
+    } catch (error) {
+        return new Error(error.message)
     }
+}

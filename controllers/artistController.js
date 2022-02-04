@@ -26,11 +26,23 @@ exports.addArtist = async (artistProfile) => {
 }
 
 exports.fetchArtist = async (artistId) => {
-try {
-    const artist = await Artist.findOne({userId:artistId});
-    return artist 
-    
-} catch (error) {
-    return new Error(error.message)
+    try {
+        const artist = await Artist.findOne({ userId: artistId });
+        return artist
+
+    } catch (error) {
+        return new Error(error.message)
+    }
 }
+
+exports.updateArtist = async (artistId, profile) => {
+    try {
+        const artist = await Artist.findOneAndUpdate({ userId: artistId }, profile, {
+            new: true
+        });
+        return artist
+
+    } catch (error) {
+        return new Error(error.message)
+    }
 }

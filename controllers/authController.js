@@ -4,8 +4,10 @@ const bcrypt = require("bcryptjs")
 const { promisify } = require("util")
 const crypto = require("crypto");
 const sendEmail = require("../utility/email");
-const { addArtist, fetchArtist } = require("./artistController");
-const { addBuyer, fetchBuyer } = require("./buyerController");
+const { addArtist, fetchArtist, updateArtist } = require("./artistController");
+const { addBuyer, fetchBuyer, upadateBuyer } = require("./buyerController");
+const Artist = require("../models/artistModel");
+const Buyer = require("../models/buyerModel");
 
 
 const signJWT = (userId) => {
@@ -120,6 +122,65 @@ exports.login = async (req, res) => {
 
     }
 }
+
+// exports.updateProfile = async (req, res) => {
+//     try {
+//         console.log(req.body)
+//         const { role, email, username, _id } = req.body;
+//         const user = await User.findByIdAndUpdate({ _id:_id }, req.body, {
+//             new: true
+//         })
+//         console.log(user)
+//         const profile = {
+//             username: user.username,
+//             email: user.email,
+//             userId: user._id
+//         }
+//         let userProfile = null;
+//         if (user.role === "artist") userProfile = await Artist.findOneAndUpdate({ userId: _id }, profile, {
+//             new: true
+//         })
+//         else if (user.role === "buyer") userProfile = await Buyer.findOneAndUpdate({ userId: _id }, profile, {
+//             new: true
+//         })
+//         res.status(200).json({
+//             status: "profile Update",
+//             data: {
+//                 userProfile,
+//             },
+//         });
+//     } catch (error) {
+//         res.status(404).json({
+//             error: error.message,
+//         });
+//     }
+// };
+
+exports.updateProfile = async (req, res) => {
+    try {
+        const { profileId } = req.params;
+        const user = await User.findByIdAndUpdate({ _id: profileId }, req.body, {
+            new: true
+        })
+        const profile = {
+            username: user.username,
+            email: user.email,
+        }
+        let userProfile = null;
+        if (user.role === "artist") userProfile = await updateArtist(user._id, profile)
+        else if (user.role === "buyer") userProfile = await upadateBuyer(user._id, profile)
+        res.status(200).json({
+            status: "profile Update",
+            data: {
+                userProfile,
+            },
+        });
+    } catch (error) {
+        res.status(404).json({
+            error: error.message,
+        });
+    }
+};
 
 exports.protect = async (req, res, next) => {
     try {
