@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require('cors');
 const artRouter = require("./routes/artRouter");
 const authRouter = require("./routes/authRouter");
 const artistRouter = require("./routes/artistRouter")
@@ -6,6 +7,8 @@ const buyerRouter = require("./routes/buyerRouter")
 
 
 const app = express();
+app.use(cors());
+app.options('*', cors());
 
 app.use(express.json());
 app.use(express.static("public"))
