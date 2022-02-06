@@ -21,7 +21,13 @@ const artistSchema = new mongoose.Schema({
     role: {
         type: String,
         default: "artist"
-    }
+    },
+    title: {
+        type: String,
+    },
+    description: {
+        type: String,
+    },
     //bankingInfo
     //address Info
 }, {
