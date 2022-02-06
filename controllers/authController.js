@@ -6,8 +6,8 @@ const crypto = require("crypto");
 const sendEmail = require("../utility/email");
 const { addArtist, fetchArtist, updateArtist } = require("./artistController");
 const { addBuyer, fetchBuyer, upadateBuyer } = require("./buyerController");
-const Artist = require("../models/artistModel");
-const Buyer = require("../models/buyerModel");
+// const Artist = require("../models/artistModel");
+// const Buyer = require("../models/buyerModel");
 
 
 const signJWT = (userId) => {
@@ -53,7 +53,9 @@ exports.signup = async (req, res) => {
         const profile = {
             username: user.username,
             email: user.email,
-            userId: user._id
+            userId: user._id,
+            title: user.title,
+            description: user.description,
         }
         let userProfile = null;
         if (user.role === "artist") {
@@ -165,6 +167,8 @@ exports.updateProfile = async (req, res) => {
         const profile = {
             username: user.username,
             email: user.email,
+            title: user.title,
+            description: user.description,
         }
         let userProfile = null;
         if (user.role === "artist") userProfile = await updateArtist(user._id, profile)

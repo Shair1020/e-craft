@@ -21,6 +21,12 @@ const userSchema = new mongoose.Schema({
         type: String,
         default:"default.png"
     },
+    title: {
+        type: String,
+    },
+    description: {
+        type: String,
+    },
     password: {
         type: String,
         required: [true, "password is required"],
