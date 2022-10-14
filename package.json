@@ -11,6 +11,6 @@
     "uuid": "^8.3.2"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=production&&nodemon server.js"
+    "start": "cross-env NODE_ENV=production && nodemon server.js"
   }
 }
