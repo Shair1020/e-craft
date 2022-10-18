@@ -1,5 +1,5 @@
 const express = require("express");
-const { addArt, getArt, fetchArt, deleteArt, upadteArt, likeArt, disLikeArt, artUpload, testArt } = require("../controllers/artcontroller");
+const { addArt, getArt, fetchArt, deleteArt, upadteArt, likeArt, disLikeArt, artUpload, testArt } = require("../controllers/artController");
 const { protect, restrictTo } = require("../controllers/authController");
 const reviewRouter = require("./../routes/reviewRouter");
 const router = express.Router();
